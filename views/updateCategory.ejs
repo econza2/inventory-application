@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=title%></title>
+  </head>
+  <body>
+    <h2>Update <%=category%></h2>
+    <%- include("partials/errors.ejs") %>
+    <form action="/update/<%=category%>/<%=index%>" method="post">
+      <label for="category_name">Name</label>
+      <input
+        type="text"
+        name="category_name"
+        id="category_name"
+        value="<%=category%>"
+      />
+      <button type="submit">Update Category Name</button>
+    </form>
+  </body>
+</html>

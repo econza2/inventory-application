@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update <%=itemName%></title>
+  </head>
+  <body>
+    <%- include("partials/errors.ejs") %>
+
+    <form action="/update-item/<%=index%>/<%=item%>/<%=number%>" method="post">
+      <label for="item_name">Name</label>
+      <input
+        type="text"
+        name="item_name"
+        id="item_name"
+        value="<%=itemName%>"
+      />
+      <button type="submit">Update Item Name</button>
+    </form>
+  </body>
+</html>

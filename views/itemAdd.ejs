@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=title%></title>
+  </head>
+  <body>
+    <%- include("partials/errors.ejs") %>
+
+    <form action="/add-items/items/add-item/<%=index%>" method="post">
+      <label for="item_name">Name</label>
+      <input type="text" name="item_name" id="item_name" />
+      <button type="submit">Add Item</button>
+    </form>
+  </body>
+</html>

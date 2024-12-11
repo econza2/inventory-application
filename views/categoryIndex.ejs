@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=title%></title>
+  </head>
+  <body>
+    <h1><%=heading%></h1>
+    <ul>
+      <% categories.forEach((category, index) => { %>
+      <li>
+        <%= category.name%>
+        <a href="/<%=category.name%>/<%=index%>"
+          >View Items In <%=category.name%> Category</a
+        >
+        <a href="/update-category/<%=category.name%>/<%=index%>"
+          >Update <%=category.name%></a
+        >
+        <form
+          action="/delete-category/<%=category.name%>/<%=index%>"
+          method="post"
+          style="display: inline"
+        >
+          <button type="submit">Delete <%=category.name%></button>
+        </form>
+      </li>
+
+      <%})%>
+    </ul>
+    <a href="/add-new-category">Add New Category</a>
+  </body>
+</html>

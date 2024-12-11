@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=title%></title>
+  </head>
+  <body>
+    <h1><%=title%></h1>
+    <ul>
+      <%categories[index].items.forEach((item, number) => { %>
+      <li>
+        <%=item.name%>
+        <a href="/<%=index%>/<%=item.name%>/<%=number%>">View <%=item.name%></a>
+        <a href="/update-item/<%=index%>/<%=item.name%>/<%=number%>"
+          >Update <%=item.name%></a
+        >
+        <form
+          action="/delete-item/<%=index%>/<%=item.name%>/<%=number%>"
+          method="post"
+          style="display: inline"
+        >
+          <button type="submit">Delete <%=item.name%></button>
+        </form>
+      </li>
+
+      <%})%>
+    </ul>
+    <a href="/add-items/items/add-item/<%=index%>">Add An Item</a>
+    <a href="/">Back To Categories</a>
+  </body>
+</html>
