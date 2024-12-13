@@ -4,26 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%=title%></title>
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <h1><%=title%></h1>
+
     <ul>
-      <%categories[index].items.forEach((item, number) => { %>
+      <% categoriesDb.filter((specific) => {return specific.category_id ==
+      index}).forEach((category, indexNumber) => { %>
       <li>
-        <%=item.name%>
-        <a href="/<%=index%>/<%=item.name%>/<%=number%>">View <%=item.name%></a>
-        <a href="/update-item/<%=index%>/<%=item.name%>/<%=number%>"
-          >Update <%=item.name%></a
+        <%=category.item_name%>
+        <a
+          href="/<%=category.category_id%>/<%=category.item_name%>/<%=indexNumber%>"
+          >View <%=category.item_name%></a
+        >
+        <a
+          href="/update-item/<%=category.category_id%>/<%=category.item_name%>/<%=indexNumber%>/<%=category.item_id%>"
+          >Update <%=category.item_name%></a
         >
         <form
-          action="/delete-item/<%=index%>/<%=item.name%>/<%=number%>"
+          action="/delete-item/<%=category.category_id%>/<%=category.item_name%>/<%=indexNumber%>/<%=category.item_id%>"
           method="post"
           style="display: inline"
         >
-          <button type="submit">Delete <%=item.name%></button>
+          <button type="submit">Delete <%=category.item_name%></button>
         </form>
       </li>
-
       <%})%>
     </ul>
     <a href="/add-items/items/add-item/<%=index%>">Add An Item</a>

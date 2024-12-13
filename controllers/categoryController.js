@@ -1,4 +1,5 @@
 const { body, validationResult } = require("express-validator");
+const db = require("../db/queries");
 
 const validateCategory = [
   body("category_name").notEmpty().withMessage("Category Name Cannot Be Empty"),
@@ -8,58 +9,34 @@ const validateItem = [
   body("item_name").notEmpty().withMessage("Item Name Cannot Be Empty"),
 ];
 
-const categories = [
-  {
-    id: 1,
-    name: "Fruits",
-    items: [
-      { id: 1, name: "Pineapple" },
-      { id: 2, name: "Apple" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Vegetables",
-    items: [
-      { id: 1, name: "Kales" },
-      { id: 2, name: "Spinach" },
-    ],
-  },
-  {
-    id: 3,
-    name: "Cereals",
-    items: [
-      { id: 1, name: "Beans" },
-      { id: 2, name: "Maize" },
-    ],
-  },
-];
+async function indexCategoriesGet(req, res) {
+  const categoriesDb = await db.getAllCategories();
 
-exports.indexCategoriesGet = (req, res) => {
   res.render("categoryIndex", {
     title: "Categories",
     heading: "Categories",
-    categories: categories,
+    categories: categoriesDb,
   });
-};
+}
 
-exports.specificCategoriesGet = (req, res) => {
+async function specificCategoriesGet(req, res) {
+  const itemCategoriesDb = await db.getCategoryItemPair();
   const { category, index } = req.params;
 
   res.render("categoryItems", {
-    categories: categories,
+    categoriesDb: itemCategoriesDb,
     title: category,
     index: index,
   });
-};
+}
 
-exports.addNewCategoryGet = (req, res) => {
+function addNewCategoryGet(req, res) {
   res.render("addNewCategory", { title: "Add New Category" });
-};
+}
 
-exports.addNewCategoryPost = [
-  validateCategory,
-  (req, res) => {
+const addNewCategoryPost = [
+  [validateCategory],
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).render("addNewCategory", {
@@ -67,28 +44,23 @@ exports.addNewCategoryPost = [
         errors: errors.array(),
       });
     }
-
-    categories.push({
-      id: categories.length,
-      name: req.body.category_name,
-      items: [],
-    });
+    await db.addNewCategory(req.body.category_name);
     res.redirect("/");
   },
 ];
 
-exports.updateCategoryGet = (req, res) => {
+function updateCategoryGet(req, res) {
   const { category, index } = req.params;
   res.render("updateCategory", {
     title: "Update Category",
     category: category,
     index: index,
   });
-};
+}
 
-exports.updateCategoryPost = [
+const updateCategoryPost = [
   validateCategory,
-  (req, res) => {
+  async (req, res) => {
     const { category, index } = req.params;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -100,41 +72,46 @@ exports.updateCategoryPost = [
       });
     }
 
-    categories[index].name = req.body.category_name;
+    await db.updateCategory(req.body.category_name, index);
     res.redirect("/");
   },
 ];
 
-exports.deleteCategoryPost = (req, res) => {
+async function deleteCategoryPost(req, res) {
   const { index, category } = req.params;
-  categories.splice(index, 1);
+  await db.deleteCategory(index);
   res.redirect("/");
-};
+}
 
-exports.specificItemGet = (req, res) => {
+async function specificItemGet(req, res) {
   const { index, item, number } = req.params;
+  const itemCategoriesDb = await db.getCategoryItemPair();
 
-  res.render("itemView", { itemName: categories[index]["items"][number].name });
-};
+  res.render("itemView", { itemName: itemCategoriesDb[number].item_name });
+}
 
-exports.updateItemGet = (req, res) => {
-  const { index, item, number } = req.params;
+async function updateItemGet(req, res) {
+  const { index, item, number, specificId } = req.params;
+  const itemCategoriesDb = await db.getCategoryItemPair();
+
   res.render("itemUpdate", {
-    itemName: categories[index]["items"][number].name,
+    itemName: itemCategoriesDb[number].item_name,
     index: index,
     item: item,
     number: number,
+    specificId: specificId,
   });
-};
+}
 
-exports.updateItemPost = [
+const updateItemPost = [
   validateItem,
-  (req, res) => {
-    const { index, item, number } = req.params;
+  async (req, res) => {
+    const { index, item, number, specificId } = req.params;
+    const itemCategoriesDb = await db.getCategoryItemPair();
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).render("itemUpdate", {
-        itemName: categories[index]["items"][number].name,
+        itemName: itemCategoriesDb[number].item_name,
         index: index,
         item: item,
         number: number,
@@ -142,43 +119,55 @@ exports.updateItemPost = [
       });
     }
 
-    categories[index]["items"][number].name = req.body.item_name;
-    res.redirect(`/${categories[index].name}/${index}`);
+    await db.updateItem(req.body.item_name, specificId);
+    res.redirect("/");
   },
 ];
 
-exports.deleteItemPost = (req, res) => {
-  const { index, item, number } = req.params;
+async function deleteItemPost(req, res) {
+  const { index, item, number, specificId } = req.params;
+  const itemCategoriesDb = await db.getCategoryItemPair();
 
-  categories[index]["items"].splice(number, 1);
-  res.redirect(`/${categories[index].name}/${index}`);
-};
+  await db.deleteItem(specificId);
+  res.redirect("/");
+}
 
-exports.addItemGet = (req, res) => {
+function addItemGet(req, res) {
   const { index } = req.params;
   res.render("itemAdd", { title: "Add Item", index: index });
-};
+}
 
-exports.addItemPost = [
+const addItemPost = [
   validateItem,
-  (req, res) => {
+  async (req, res) => {
     const { index } = req.params;
+    const itemCategoriesDb = await db.getCategoryItemPair();
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res
-        .status(400)
-        .render("itemAdd", {
-          title: "Add Item",
-          index: index,
-          errors: errors.array(),
-        });
+      return res.status(400).render("itemAdd", {
+        title: "Add Item",
+        index: index,
+        errors: errors.array(),
+      });
     }
 
-    categories[index]["items"].push({
-      id: categories[index]["items"].length,
-      name: req.body.item_name,
-    });
-
-    res.redirect(`/${categories[index].name}/${index}`);
+    await db.addItem(req.body.item_name, index);
+    res.redirect(`/`);
   },
 ];
+
+module.exports = {
+  indexCategoriesGet,
+  specificCategoriesGet,
+  addNewCategoryGet,
+  addNewCategoryPost,
+  updateCategoryGet,
+  updateCategoryPost,
+  deleteCategoryPost,
+  specificItemGet,
+  updateItemGet,
+  updateItemPost,
+  deleteItemPost,
+  addItemGet,
+  addItemPost,
+};

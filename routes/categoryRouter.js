@@ -2,47 +2,43 @@ const { Router } = require("express");
 
 const categoryRouter = Router();
 
-const categoryController = require("../controllers/categoryController");
+const {
+  indexCategoriesGet,
+  specificCategoriesGet,
+  addNewCategoryGet,
+  addNewCategoryPost,
+  updateCategoryGet,
+  updateCategoryPost,
+  deleteCategoryPost,
+  specificItemGet,
+  updateItemGet,
+  updateItemPost,
+  deleteItemPost,
+  addItemGet,
+  addItemPost,
+} = require("../controllers/categoryController");
 
-categoryRouter.get("/", categoryController.indexCategoriesGet);
+categoryRouter.get("/", indexCategoriesGet);
+categoryRouter.get("/:category/:index", specificCategoriesGet);
+categoryRouter.get("/add-new-category", addNewCategoryGet);
+categoryRouter.post("/add-new-category", addNewCategoryPost);
+categoryRouter.get("/update-category/:category/:index", updateCategoryGet);
+categoryRouter.post("/update/:category/:index", updateCategoryPost);
+categoryRouter.post("/delete-category/:category/:index", deleteCategoryPost);
+categoryRouter.get("/:index/:item/:number", specificItemGet);
 categoryRouter.get(
-  "/:category/:index",
-  categoryController.specificCategoriesGet
-);
-categoryRouter.get("/add-new-category", categoryController.addNewCategoryGet);
-categoryRouter.post("/add-new-category", categoryController.addNewCategoryPost);
-categoryRouter.get(
-  "/update-category/:category/:index",
-  categoryController.updateCategoryGet
+  "/update-item/:index/:item/:number/:specificId",
+  updateItemGet
 );
 categoryRouter.post(
-  "/update/:category/:index",
-  categoryController.updateCategoryPost
+  "/update-item/:index/:item/:number/:specificId",
+  updateItemPost
 );
 categoryRouter.post(
-  "/delete-category/:category/:index",
-  categoryController.deleteCategoryPost
+  "/delete-item/:index/:item/:number/:specificId",
+  deleteItemPost
 );
-categoryRouter.get("/:index/:item/:number", categoryController.specificItemGet);
-categoryRouter.get(
-  "/update-item/:index/:item/:number",
-  categoryController.updateItemGet
-);
-categoryRouter.post(
-  "/update-item/:index/:item/:number",
-  categoryController.updateItemPost
-);
-categoryRouter.post(
-  "/delete-item/:index/:item/:number",
-  categoryController.deleteItemPost
-);
-categoryRouter.get(
-  "/add-items/items/add-item/:index",
-  categoryController.addItemGet
-);
-categoryRouter.post(
-  "/add-items/items/add-item/:index",
-  categoryController.addItemPost
-);
+categoryRouter.get("/add-items/items/add-item/:index", addItemGet);
+categoryRouter.post("/add-items/items/add-item/:index", addItemPost);
 
 module.exports = categoryRouter;

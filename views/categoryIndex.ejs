@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%=title%></title>
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <h1><%=heading%></h1>
@@ -11,14 +12,14 @@
       <% categories.forEach((category, index) => { %>
       <li>
         <%= category.name%>
-        <a href="/<%=category.name%>/<%=index%>"
+        <a href="/<%=category.name%>/<%=category.id%>"
           >View Items In <%=category.name%> Category</a
         >
-        <a href="/update-category/<%=category.name%>/<%=index%>"
+        <a href="/update-category/<%=category.name%>/<%=category.id%>"
           >Update <%=category.name%></a
         >
         <form
-          action="/delete-category/<%=category.name%>/<%=index%>"
+          action="/delete-category/<%=category.name%>/<%=category.id%>"
           method="post"
           style="display: inline"
         >
